@@ -8,16 +8,17 @@
 import UIKit
 
 protocol Network {
-    func fetchData(from urlString: String) async throws -> [Country]
+    func fetchData(from urlString: String) async -> [Country]
 }
 
 class NetworkManager: Network {
     static let shared = NetworkManager()
     init() {}
     
-    func fetchData(from urlString: String) async throws -> [Country] {
+    func fetchData(from urlString: String) async -> [Country] {
         guard let url = URL(string: urlString) else {
-            throw NetworkError.invalidURL
+            print("invalid url")
+            return []
         }
         
         do {
@@ -26,7 +27,8 @@ class NetworkManager: Network {
             return fetchedData
         }
         catch {
-            throw NetworkError.requestFailed(error)
+            print("unable to decode the data")
+            return []
         }
     }
 }

@@ -10,39 +10,39 @@ import SwiftUI
 struct ContentView: View {
     
     @ObservedObject var countryViewModel : CountryViewModel
+    @State private var path = NavigationPath()
     
     init(countryViewModel: CountryViewModel) {
         self.countryViewModel = countryViewModel
     }
     
     var body: some View {
-        NavigationStack{
-            VStack() {
-                Text("Country")
-                    .font(.title)
-                
-                List(countryViewModel.country, id: \.self) { country in
-                    NavigationLink(destination : DetailsView(country: country.name)) {
-                        RowView(
-                            capital: country.capital ?? "",
-                            code: country.code ?? "",
-                            flag: country.flag ?? "",
-                            name: country.name ?? ""
-                            
-                        )
+            NavigationStack(path: $path) {
+                VStack {
+                    Text("Country")
+                        .font(.title2)
+                    
+                    List(countryViewModel.country, id: \.self) { country in
+                        Button {
+                            path.append(country)
+                        } label: {
+                            RowView(
+                                capital: country.capital ?? "",
+                                code: country.code ?? "",
+                                flag: country.flag ?? "",
+                                name: country.name ?? ""
+                            )
+                        }
                     }
                 }
+                .navigationDestination(for: Country.self) { country in
+                    DetailsView(country: country.name ?? "Unknown")
+                }
+            }
+            .task {
+                await countryViewModel.loadCountry()
             }
         }
-        .task {
-            do {
-                try await countryViewModel.loadCountry()
-            }
-            catch {
-                print("data not loaded : \(error)")
-            }
-        }
-    }
 }
 
 struct RowView : View {
@@ -57,6 +57,7 @@ struct RowView : View {
             HStack {
                 Text(capital ?? "")
                     .font(.title3)
+                    .foregroundColor(.black)
                 
                 Text(code ?? "")
                     .font(.subheadline)
@@ -65,6 +66,7 @@ struct RowView : View {
             
             Text(name ?? "")
                 .font(.title3)
+                .foregroundColor(.black)
         }
     }
 }

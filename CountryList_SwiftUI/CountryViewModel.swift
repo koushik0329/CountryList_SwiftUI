@@ -17,14 +17,8 @@ class CountryViewModel : ObservableObject {
         self.networkObj = networkObj
     }
     
-    func loadCountry() async throws {
-        do {
-            country = try await networkObj.fetchData(from: Server.endPoint.rawValue)
-            
-        }
-        catch {
-            throw NetworkError.requestFailed(error)
-        }
+    func loadCountry() async {
+        country = await networkObj.fetchData(from: Server.endPoint.rawValue)
     }
-
+    nonisolated func abc() {}
 }
