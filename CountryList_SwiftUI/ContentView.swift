@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @ObservedObject var countryViewModel : CountryViewModel
+    var countryViewModel : CountryViewModel
     @State private var path = NavigationPath()
     
     init(countryViewModel: CountryViewModel) {
@@ -52,21 +52,27 @@ struct RowView : View {
     var name : String?
     
     var body : some View {
-        
-        VStack(alignment: .leading, spacing: 5) {
-            HStack {
-                Text(capital ?? "")
+        HStack{
+            
+            VStack(alignment: .leading, spacing: 5) {
+                HStack {
+                    Text(capital ?? "")
+                        .font(.title3)
+                        .foregroundColor(.black)
+                    
+                    Text(code ?? "")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                }
+                
+                Text(name ?? "")
                     .font(.title3)
                     .foregroundColor(.black)
-                
-                Text(code ?? "")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
             }
             
-            Text(name ?? "")
-                .font(.title3)
-                .foregroundColor(.black)
+            Spacer()
+            
+            Image(systemName: "flag")
         }
     }
 }

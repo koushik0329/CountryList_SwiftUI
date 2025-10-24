@@ -5,11 +5,12 @@
 //  Created by Koushik Reddy Kambham on 10/15/25.
 //
 
-import UIKit
+import Foundation
 
 @MainActor
-class CountryViewModel : ObservableObject {
-    @Published var country : [Country] = []
+@Observable
+class CountryViewModel {
+    var country : [Country] = []
     
     let networkObj : Network
     
