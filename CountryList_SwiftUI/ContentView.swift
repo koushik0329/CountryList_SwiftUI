@@ -39,8 +39,8 @@ struct ContentView: View {
                     DetailsView(country: country.name ?? "Unknown")
                 }
             }
-            .task {
-                await countryViewModel.loadCountry()
+            .onAppear() {
+                countryViewModel.loadCountry()
             }
         }
 }
@@ -87,5 +87,5 @@ struct DetailsView : View {
     }
 }
 #Preview {
-    ContentView(countryViewModel: CountryViewModel(networkObj: NetworkManager()))
+    ContentView(countryViewModel: CountryViewModel(networkObj : NetworkManager.shared))
 }

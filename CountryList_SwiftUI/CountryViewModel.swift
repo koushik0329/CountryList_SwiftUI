@@ -5,21 +5,28 @@
 //  Created by Koushik Reddy Kambham on 10/15/25.
 //
 
+import Combine
 import Foundation
 
-@MainActor
 @Observable
 class CountryViewModel {
-    var country : [Country] = []
     
-    let networkObj : Network
+    var country: [Country] = []
+    private var cancellables = Set<AnyCancellable>()
     
-    init(networkObj : Network) {
+    let networkObj: Network
+    
+    init(networkObj: Network) {
         self.networkObj = networkObj
     }
     
-    func loadCountry() async {
-        country = await networkObj.fetchData(from: Server.endPoint.rawValue)
+    func loadCountry() {
+        networkObj.fetchData(from: Server.endPoint.rawValue)
+            .receive(on: DispatchQueue.main)
+            .replaceError(with: [])
+            .sink { [weak self] fetchedData in
+                self?.country = fetchedData
+            }
+            .store(in: &cancellables)
     }
-    nonisolated func abc() {}
 }

@@ -4,31 +4,27 @@
 //
 //  Created by Koushik Reddy Kambham on 10/15/25.
 //
-
-import UIKit
+import Foundation
+import Combine
 
 protocol Network {
-    func fetchData(from urlString: String) async -> [Country]
+    func fetchData(from urlString: String) -> AnyPublisher<[Country], Error>
 }
 
 class NetworkManager: Network {
     static let shared = NetworkManager()
-    init() {}
+    private init() {}
     
-    func fetchData(from urlString: String) async -> [Country] {
+    func fetchData(from urlString: String) -> AnyPublisher<[Country], Error> {
         guard let url = URL(string: urlString) else {
-            print("invalid url")
-            return []
+            return Fail(error: URLError(.badURL))
+                .eraseToAnyPublisher()
         }
         
-        do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            let fetchedData = try JSONDecoder().decode([Country].self, from: data)
-            return fetchedData
-        }
-        catch {
-            print("unable to decode the data")
-            return []
-        }
+        return URLSession.shared
+            .dataTaskPublisher(for: url)
+            .map(\.data)
+            .decode(type: [Country].self, decoder: JSONDecoder())
+            .eraseToAnyPublisher()
     }
 }
