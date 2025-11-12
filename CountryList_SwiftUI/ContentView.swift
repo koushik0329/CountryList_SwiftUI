@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+extension Notification.Name {
+    static let countrySelected = Notification.Name("countrySelected")
+}
+
 struct ContentView: View {
     
     var countryViewModel : CountryViewModel
@@ -24,6 +28,7 @@ struct ContentView: View {
                     
                     List(countryViewModel.country, id: \.self) { country in
                         Button {
+                            NotificationCenter.default.post(name: .countrySelected, object: nil, userInfo: ["country": country.name ?? "Unknown"])
                             path.append(country)
                         } label: {
                             RowView(
@@ -80,10 +85,23 @@ struct RowView : View {
 struct DetailsView : View {
     
     var country: String?
+    @State private var selectedCountry: String = ""
     
     var body: some View {
-        Text(country ?? "")
-            .font(.headline)
+            VStack {
+                Text(country ?? "")
+                    .font(.headline)
+                        Text("Details View")
+                            .font(.headline)
+                        Text(selectedCountry)
+                            .font(.title2)
+                    }
+                    .onReceive(NotificationCenter.default.publisher(for: .countrySelected)) { notification in
+                        if let info = notification.userInfo as? [String: String],
+                           let name = info["country"] {
+                            selectedCountry = name
+                        }
+                    }
     }
 }
 #Preview {

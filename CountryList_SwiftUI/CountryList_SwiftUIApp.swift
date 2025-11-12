@@ -11,7 +11,8 @@ import SwiftUI
 struct CountryList_SwiftUIApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView(countryViewModel: CountryViewModel(networkObj: NetworkManager.shared))
+//            ContentView(countryViewModel: CountryViewModel(networkObj: NetworkManager.shared))
+            RootView(countryViewModel: CountryViewModel(networkObj: NetworkManager.shared))
         }
     }
 }
